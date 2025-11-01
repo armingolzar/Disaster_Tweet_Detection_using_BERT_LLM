@@ -1,0 +1,48 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+env/
+venv/
+.venv/
+*.conda
+*.env
+*.venv/
+
+# Python-specific logs
+*.log
+*.sqlite3
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# VS Code / IDE settings
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+
+# Dataset / large files
+/data/
+*.zip
+*.tar.gz
+*.npz
+*.npy
+*.csv
+
+# Logs / TensorBoard
+runs/
+logs/
+events.out.tfevents.*
+
+# Mac / Windows hidden files
+*.swp
+*.swo
