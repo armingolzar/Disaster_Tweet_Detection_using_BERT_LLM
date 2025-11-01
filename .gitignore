@@ -1,34 +1,48 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
-*.log
+*$py.class
 
-# Virtual environment
-venv/
+# Virtual environments
 env/
+venv/
 .venv/
-.env/
+*.conda
+*.env
+*.venv/
 
-# Jupyter Notebook
-.ipynb_checkpoints/
+# Python-specific logs
+*.log
+*.sqlite3
 
-# Data files (ignore large CSVs, zip, tar)
-data/*.csv
-data/*.zip
-data/*.tar.gz
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# VS Code / IDE settings
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
 
 # OS files
-.DS_Store
 Thumbs.db
+.DS_Store
+Desktop.ini
 
-# Logs
-*.log
-*.out
-*.err
+
+# Dataset / large files
+/data/
+*.zip
+*.tar.gz
+*.npz
+*.npy
+*.csv
+
+# Logs / TensorBoard
+runs/
+logs/
+events.out.tfevents.*
+
+# Mac / Windows hidden files
+*.swp
+*.swo
