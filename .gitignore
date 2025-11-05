@@ -45,7 +45,6 @@ tensorboard_logs/
 events.out.tfevents.*
 outputs/
 results/
-assets/
 plots/
 runs/
 
