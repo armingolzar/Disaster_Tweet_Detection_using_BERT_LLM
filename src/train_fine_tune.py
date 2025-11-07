@@ -3,11 +3,14 @@ from transformers import TFBertModel, BertTokenizer
 from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Model
 import os
+from src.data_loader import preparing_bert_training_datasets
+from src.utils import training_plot
+import src.config as config 
 
 # --- CONFIG ---
 BERT_NAME = "bert-base-uncased"
 SEQ_LEN = 100
-BATCH_SIZE = 16
+BATCH_SIZE = 64
 STAGE1_EPOCHS = 3            # BERT + dense
 STAGE2_EXTRA_EPOCHS = 27     # dense-only
 TOTAL_EPOCHS = STAGE1_EPOCHS + STAGE2_EXTRA_EPOCHS
@@ -16,7 +19,8 @@ LR_BERT = 2e-5
 LR_DENSE = 1e-4
 CLIP_NORM = 1.0
 
-SAVE_PATH = "..\\models\\bert_disaster_classifier_best_fine_tune"  # path to save best model
+SAVE_PATH_MODELS = "..\\models\\bert_disaster_classifier_best_fine_tune"  # path to save best model
+SAVE_PATH_PLOTS = "..\\assets\\fine_tuning_training_curve.png"
 
 # --- Build model ---
 bert_model = TFBertModel.from_pretrained(BERT_NAME)
@@ -49,7 +53,8 @@ model = Model(inputs=[input_tokens, input_masks], outputs=output)
 
 # --- Identify variable groups ---
 bert_vars = [v for v in model.trainable_variables if "/bert/" in v.name or v.name.startswith("bert/") or "tf_bert_model/bert" in v.name]
-dense_vars = [v for v in model.trainable_variables if v not in bert_vars]
+bert_var_ids = {id(v) for v in bert_vars}
+dense_vars = [v for v in model.trainable_variables if id(v) not in bert_var_ids]
 
 print(f"bert_vars: {len(bert_vars)} variables, dense_vars: {len(dense_vars)} variables")
 
@@ -135,7 +140,7 @@ def train(train_dataset, val_dataset):
         # --- Save best model ---
         if val_loss.result() < best_val_loss:
             best_val_loss = val_loss.result()
-            model.save(SAVE_PATH, save_format="tf")
+            model.save(SAVE_PATH_MODELS, save_format="tf")
             print(f"✅ Best model saved (Stage1) with val_loss = {best_val_loss:.4f}")
 
     # --- Stage 2: freeze BERT, train dense-only ---
@@ -166,10 +171,23 @@ def train(train_dataset, val_dataset):
         # --- Save best model ---
         if val_loss.result() < best_val_loss:
             best_val_loss = val_loss.result()
-            model.save(SAVE_PATH, save_format="tf")
+            model.save(SAVE_PATH_MODELS, save_format="tf")
             print(f"✅ Best model saved (Stage2) with val_loss = {best_val_loss:.4f}")
 
     print("Training complete.")
-    print(f"📦 Best model stored at: {os.path.abspath(SAVE_PATH)}")
+    print(f"📦 Best model stored at: {os.path.abspath(SAVE_PATH_MODELS)}")
 
-    plot_metrics(train_loss_history, val_loss_history, train_acc_history, val_acc_history)
+    history = {
+        "train_loss": train_loss_history,
+        "val_loss": val_loss_history,
+        "train_acc": train_acc_history,
+        "val_acc": val_acc_history}
+    
+    return history
+
+train_dataset, val_dataset = preparing_bert_training_datasets(config.TRAIN_PATH)
+history = train(train_dataset, val_dataset)
+training_plot(history)
+
+
+
