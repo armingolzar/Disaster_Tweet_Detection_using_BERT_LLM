@@ -15,8 +15,8 @@ STAGE1_EPOCHS = 4            # BERT + dense
 STAGE2_EXTRA_EPOCHS = 20     # dense-only
 TOTAL_EPOCHS = STAGE1_EPOCHS + STAGE2_EXTRA_EPOCHS
 
-LR_BERT = 1e-4
-LR_DENSE = 1e-2
+LR_BERT = 1e-5
+LR_DENSE = 1e-3
 CLIP_NORM = 1.0
 
 
@@ -44,14 +44,14 @@ drop2 = Dropout(0.2, name="drop2")(norm1)
 dense2 = Dense(128, activation="relu", name="dense2")(drop2)
 norm2 = LayerNormalization(name="norm2")(dense2)
 drop3 = Dropout(0.2, name="drop3")(norm2)
-dense3 = Dense(64, activation="relu", name="dense3")(drop3)
-norm3 = LayerNormalization(name="norm3")(dense3)
-drop4 = Dropout(0.2, name="drop4")(norm3)
-dense4 = Dense(32, activation="relu", name="dense4")(drop4)
+dense3 = Dense(32, activation="relu", name="dense3")(drop3)
+# norm3 = LayerNormalization(name="norm3")(dense3)
+drop4 = Dropout(0.2, name="drop4")(dense3)
+# dense4 = Dense(16, activation="relu", name="dense4")(drop4)
 # norm4 = LayerNormalization(name="norm4")(dense4)
-drop5 = Dropout(0.2, name="drop5")(dense4)
+# drop5 = Dropout(0.2, name="drop5")(dense4)
 # dense5 = Dense(16, activation="relu", name="dense5")(drop5)
-output = Dense(1, activation="sigmoid", name="output")(drop5)
+output = Dense(1, activation="sigmoid", name="output")(drop4)
 
 model = Model(inputs=[input_tokens, input_masks], outputs=output)
 
